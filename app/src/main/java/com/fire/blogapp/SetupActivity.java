@@ -46,6 +46,7 @@ public class SetupActivity extends AppCompatActivity {
     private CircleImageView setupImage;
     private Uri mainImageURI= null;
     private String user_id;
+    private Boolean isChanged = false;
 
     private EditText setupName;
     private Button setupBtn;
@@ -114,61 +115,50 @@ public class SetupActivity extends AppCompatActivity {
         setupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 final String user_name = setupName.getText().toString();
 
-                if(!TextUtils.isEmpty(user_name) && mainImageURI !=null){
+                if(isChanged){
 
-                    user_id = firebaseAuth.getCurrentUser().getUid();
-                    setupProgress.setVisibility(View.VISIBLE);
 
-                    final StorageReference image_path = storageReference.child("profile_images").child(user_id +".jpg");
 
-                    image_path.putFile(mainImageURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                        @Override
-                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                            if (!task.isSuccessful()) {
-                                throw task.getException();
+                    if(!TextUtils.isEmpty(user_name) && mainImageURI !=null){
+
+                        user_id = firebaseAuth.getCurrentUser().getUid();
+                        setupProgress.setVisibility(View.VISIBLE);
+
+                        final StorageReference image_path = storageReference.child("profile_images").child(user_id +".jpg");
+
+                        image_path.putFile(mainImageURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                            @Override
+                            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                if (!task.isSuccessful()) {
+                                    throw task.getException();
+                                }
+                                return image_path.getDownloadUrl();
                             }
-                            return image_path.getDownloadUrl();
-                        }
-                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            if (task.isSuccessful()) {
-                                Uri downloadUri = task.getResult();
+                        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
+                                if (task.isSuccessful()) {
+                                    storeFirestore(task, user_name);
 
-                                Map<String , String> userMap = new HashMap<>();
-                                userMap.put("name",user_name);
-                                userMap.put("image",downloadUri.toString());
+                                } else {
+                                    setupProgress.setVisibility(View.INVISIBLE);
+                                    Toast.makeText(SetupActivity.this, "Image Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                }
 
-                                firebaseFirestore.collection("Users").document(user_id).set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-
-                                        if(task.isSuccessful()){
-
-                                            Intent mainIntent = new Intent(SetupActivity.this,MainActivity.class);
-                                            startActivity(mainIntent);
-                                            finish();
-
-                                        }else{
-                                            Toast.makeText(SetupActivity.this, "FireStore Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-                                        setupProgress.setVisibility(View.INVISIBLE);
-                                    }
-                                });
-
-                            } else {
-                                setupProgress.setVisibility(View.INVISIBLE);
-                                Toast.makeText(SetupActivity.this, "Image Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
 
-                        }
+                        });
 
-                    });
+                    }
 
+
+                }else{
+
+                    storeFirestore(null, user_name);
                 }
+
             }
         });
 
@@ -199,6 +189,41 @@ public class SetupActivity extends AppCompatActivity {
         });
     }
 
+    private void storeFirestore(Task<Uri> task ,String user_name) {
+        Uri downloadUri;
+
+        if(task != null) {
+
+            downloadUri = task.getResult();
+
+        } else {
+
+            downloadUri = mainImageURI;
+
+        }
+
+        Map<String , String> userMap = new HashMap<>();
+        userMap.put("name",user_name);
+        userMap.put("image",downloadUri.toString());
+
+        firebaseFirestore.collection("Users").document(user_id).set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+                if(task.isSuccessful()){
+
+                    Intent mainIntent = new Intent(SetupActivity.this,MainActivity.class);
+                    startActivity(mainIntent);
+                    finish();
+
+                }else{
+                    Toast.makeText(SetupActivity.this, "FireStore Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+                setupProgress.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
@@ -207,6 +232,7 @@ public class SetupActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 mainImageURI = result.getUri();
                 setupImage.setImageURI(mainImageURI);
+                isChanged= true;
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
