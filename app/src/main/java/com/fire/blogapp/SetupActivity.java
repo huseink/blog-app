@@ -72,7 +72,9 @@ public class SetupActivity extends AppCompatActivity {
         setupBtn = findViewById(R.id.setup_btn);
         setupProgress = findViewById(R.id.setup_progress);
 
+
         setupProgress.setVisibility(View.VISIBLE);
+        // User can not save changes until profile image and user_name are fetched.
         setupBtn.setEnabled(false);
 
 
@@ -83,6 +85,7 @@ public class SetupActivity extends AppCompatActivity {
         user_id= firebaseAuth.getCurrentUser().getUid();
 
 
+        //Gets current user's profile image and name from firestore
         firebaseFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -105,9 +108,8 @@ public class SetupActivity extends AppCompatActivity {
                 }else{
                     Toast.makeText(SetupActivity.this, "Data Retrieve Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
-                setupProgress.setVisibility(View.INVISIBLE);
-                setupBtn.setEnabled(true);
 
+                setupProgress.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -117,10 +119,9 @@ public class SetupActivity extends AppCompatActivity {
             public void onClick(View view) {
                 final String user_name = setupName.getText().toString();
 
+                //If the profile image is changed
                 if(isChanged){
-
-
-
+                    //Store the image in storage
                     if(!TextUtils.isEmpty(user_name) && mainImageURI !=null){
 
                         user_id = firebaseAuth.getCurrentUser().getUid();
@@ -139,7 +140,9 @@ public class SetupActivity extends AppCompatActivity {
                         }).addOnCompleteListener(new OnCompleteListener<Uri>() {
                             @Override
                             public void onComplete(@NonNull Task<Uri> task) {
+                                // If stored succesfully
                                 if (task.isSuccessful()) {
+                                    // Proceed to store username and imageUri in FireStore (DATABASE)
                                     storeFirestore(task, user_name);
 
                                 } else {
@@ -155,7 +158,7 @@ public class SetupActivity extends AppCompatActivity {
 
 
                 }else{
-
+                    // If the profile image is not changed , change the username only
                     storeFirestore(null, user_name);
                 }
 
@@ -179,9 +182,11 @@ public class SetupActivity extends AppCompatActivity {
                         ActivityCompat.requestPermissions(SetupActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
 
                     }else{
+                        //If the permission is granted then open up Crop Activity.
                         imageCropper();
                     }
                 }else{
+                    //If user is running older Android versions, app is not required to get permission from the user.
                     imageCropper();
                 }
 
@@ -192,26 +197,29 @@ public class SetupActivity extends AppCompatActivity {
     private void storeFirestore(Task<Uri> task ,String user_name) {
         Uri downloadUri;
 
+        //If image is changed
         if(task != null) {
 
             downloadUri = task.getResult();
 
         } else {
-
+            //If image is not changed
             downloadUri = mainImageURI;
 
         }
 
+        // Store user_name and profile image URI as a Hash Map
         Map<String , String> userMap = new HashMap<>();
         userMap.put("name",user_name);
         userMap.put("image",downloadUri.toString());
 
+        //Create a collection with userMap
         firebaseFirestore.collection("Users").document(user_id).set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-
+            // If stored sucessfully
                 if(task.isSuccessful()){
-
+                    //Send user to MainActivity
                     Intent mainIntent = new Intent(SetupActivity.this,MainActivity.class);
                     startActivity(mainIntent);
                     finish();
@@ -224,6 +232,8 @@ public class SetupActivity extends AppCompatActivity {
         });
     }
 
+    // If Crop image activity returns RESULT_OK
+    // Set the profile image as cropped image
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
@@ -239,6 +249,8 @@ public class SetupActivity extends AppCompatActivity {
         }
     }
 
+
+    // Opens up Image Cropper Activity
     private void imageCropper(){
         CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
@@ -250,12 +262,16 @@ public class SetupActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case 1: {
-                // If request is cancelled, the result arrays are empty.
+                // If request is accepted, the result arrays lenghts are greater than 0.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
+
+                    // What to do when the request is given.
                     imageCropper();
-                } else {
+                }
+                // If request is cancelled, the result arrays are empty.
+                else {
                     Toast.makeText(SetupActivity.this, "Please allow required permission(s)", Toast.LENGTH_LONG).show();
                 }
                 return;

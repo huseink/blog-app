@@ -53,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
                 if(!TextUtils.isEmpty(loginEmail) && !TextUtils.isEmpty(loginPass)){
                     loginProgress.setVisibility(View.VISIBLE);
 
+                    //Sign in user with the provided email and password
                     mAuth.signInWithEmailAndPassword(loginEmail,loginPass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {

@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+    // Creates the hamburger menu on Toolbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    // What to do when any of the menu items are selected
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
