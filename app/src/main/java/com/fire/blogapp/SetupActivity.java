@@ -110,6 +110,7 @@ public class SetupActivity extends AppCompatActivity {
                 }
 
                 setupProgress.setVisibility(View.INVISIBLE);
+                setupBtn.setEnabled(true);
             }
         });
 
