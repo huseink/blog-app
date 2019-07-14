@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -17,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Toolbar mainToolbar;
     private FirebaseAuth mAuth;
+    private FloatingImageButton newPostBtn;
 
 
 
@@ -34,6 +36,17 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mainToolbar);
         getSupportActionBar().setTitle("Blog App");
         getSupportActionBar().setDisplayShowTitleEnabled(true);
+
+        newPostBtn = findViewById(R.id.new_post_btn);
+
+
+        newPostBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                    Intent postIntent = new Intent(MainActivity.this,NewPostActivity.class);
+                    startActivity(postIntent);
+            }
+        });
 
 
     }

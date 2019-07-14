@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -115,18 +116,23 @@ public class SetupActivity extends AppCompatActivity {
         });
 
 
+        // When user clicks "SAVE SETTINGS" Button
         setupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final String user_name = setupName.getText().toString();
 
-                //If the profile image is changed
-                if(isChanged){
-                    //Store the image in storage
-                    if(!TextUtils.isEmpty(user_name) && mainImageURI !=null){
+                // Name and image fields cannot be empty.
+                if(!TextUtils.isEmpty(user_name) && mainImageURI !=null){
+                    setupProgress.setVisibility(View.VISIBLE);
+                    // If the current image is updated , store it in storage and firestore
+                    if(isChanged){
+                        Log.d("if","if statement inside");
+                        System.out.println(user_name);
+                        System.out.println(mainImageURI);
 
                         user_id = firebaseAuth.getCurrentUser().getUid();
-                        setupProgress.setVisibility(View.VISIBLE);
+
 
                         final StorageReference image_path = storageReference.child("profile_images").child(user_id +".jpg");
 
@@ -153,18 +159,22 @@ public class SetupActivity extends AppCompatActivity {
 
                             }
 
-                        });
+                    });
+                    // If user doesn't update his/her image but updates the username then just change the user_name field.
+                    }else{
+                        storeFirestore(null, user_name);
 
                     }
 
 
                 }else{
-                    // If the profile image is not changed , change the username only
-                    storeFirestore(null, user_name);
+                    Toast.makeText(SetupActivity.this,"Please select an image and a name",Toast.LENGTH_LONG).show();
                 }
 
-            }
+                }
+
         });
+
 
 
         setupImage = findViewById(R.id.setup_image);

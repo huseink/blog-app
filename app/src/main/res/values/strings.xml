@@ -14,4 +14,8 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="your_name">Your Name</string>
     <string name="save_settings">Save Settings</string>
+    <string name="todo">TODO</string>
+    <string name="add_description">Add Description</string>
+    <string name="post_blog">Post Blog</string>
+    <string name="choose_a_profile_image">Choose a profile image</string>
 </resources>
