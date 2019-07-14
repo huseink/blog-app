@@ -2,6 +2,7 @@ package com.fire.blogapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -29,12 +30,15 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class NewPostActivity extends AppCompatActivity {
 
     private ImageView newPostImage;
     private EditText newPostDesc;
     private Button newPostBtn;
+
+    private Toolbar newPostToolbar;
 
     private Uri postImageUri = null;
 
@@ -59,9 +63,12 @@ public class NewPostActivity extends AppCompatActivity {
 
         newPostImage=findViewById(R.id.new_post_image);
         newPostDesc=findViewById(R.id.new_post_desc);
-        newPostBtn=findViewById(R.id.new_post_btn);
+        newPostBtn=findViewById(R.id.post_btn);
         newPostProgress=findViewById(R.id.new_post_progress);
 
+        newPostToolbar = findViewById(R.id.new_post_toolbar);
+        setSupportActionBar(newPostToolbar);
+        getSupportActionBar().setTitle("Add New Post");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
@@ -79,7 +86,7 @@ public class NewPostActivity extends AppCompatActivity {
 
                 final String desc = newPostDesc.getText().toString();
 
-                String randomName = null;
+                String randomName = UUID.randomUUID().toString();
 
                 if(!TextUtils.isEmpty(desc) && postImageUri!=null){
                     newPostProgress.setVisibility(View.VISIBLE);

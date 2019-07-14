@@ -3,11 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/action_search_btn"
-        android:icon="@mipmap/action_search"
-        android:title="@string/search"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/action_settings_btn"
         android:title="@string/account_settings" />
     <item

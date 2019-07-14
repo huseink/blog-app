@@ -18,4 +18,8 @@
     <string name="add_description">Add Description</string>
     <string name="post_blog">Post Blog</string>
     <string name="choose_a_profile_image">Choose a profile image</string>
+    <string name="username">Username</string>
+    <string name="blog_post_date">Blog Post Date</string>
+    <string name="lorem_ipsum_dolor_sit_amet_soluta_regione_urbanitas_vis_in_qui_elit_populo_ut">Lorem ipsum dolor sit amet, soluta regione urbanitas vis in, qui elit populo ut.</string>
+    <string name="description">Description:</string>
 </resources>

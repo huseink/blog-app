@@ -18,14 +18,22 @@
         app:layout_constraintTop_toTopOf="parent"
         app:titleTextColor="@color/titleText" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/blog_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="56dp"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
+
     <com.fire.blogapp.FloatingImageButton
         android:id="@+id/new_post_btn"
         android:layout_width="54dp"
         android:layout_height="57dp"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="100dp"
         android:backgroundTint="@android:color/white"
         android:clickable="true"
         android:focusable="true"
