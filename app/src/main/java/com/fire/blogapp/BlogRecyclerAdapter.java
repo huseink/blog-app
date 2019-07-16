@@ -25,6 +25,9 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+
+//The adapter is the piece that will connect our data to the RecyclerView
+// and determine the ViewHolder(s) which will need to be used to display that data.
 public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapter.ViewHolder> {
 
     public List<BlogPost> blog_list;
@@ -40,6 +43,7 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
 
     }
 
+    //  This method is called right when the adapter is created and is used to initialize ViewHolder(s)
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -52,6 +56,8 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
         return new ViewHolder(view);
     }
 
+    // Called for each ViewHolder to bind it to the adapter.
+    // This is where we will pass our data to our ViewHolder.
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 
@@ -102,6 +108,7 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
         return blog_list.size();
     }
 
+    // Object that holds the item's views.
     public class ViewHolder extends RecyclerView.ViewHolder{
         private TextView descView;
         private View mView;
@@ -114,16 +121,12 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
         public ViewHolder(@NonNull View itemView) {
                 super(itemView);
                 mView = itemView;
-
             }
-
-
 
         public void setDescText(String descText){
 
             descView = mView.findViewById(R.id.blog_desc);
             descView.setText(descText);
-
 
         }
 

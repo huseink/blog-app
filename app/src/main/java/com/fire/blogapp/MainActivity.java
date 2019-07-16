@@ -55,11 +55,13 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-
+        // Recycler View and Adapter(s) initialization
         blog_list =  new ArrayList<>();
         blog_list_view = findViewById(R.id.blog_list_view);
         blogRecyclerAdapter = new BlogRecyclerAdapter(blog_list);
+        // LinearLayoutManager is used to display our data as a linear vertical list.
         blog_list_view.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+        // Attaching blogRecyclerAdapter to the RecyclerView.
         blog_list_view.setAdapter(blogRecyclerAdapter);
 
 
@@ -131,7 +133,8 @@ public class MainActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
                     if(task.isSuccessful()){
-
+                    // If user's profile image and user_name don't exist in the collection
+                        // Redirect him to the account setup page.
                         if(!task.getResult().exists()){
 
                             Intent setupIntent = new Intent(MainActivity.this, SetupActivity.class);

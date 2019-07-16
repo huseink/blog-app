@@ -86,11 +86,11 @@ public class SetupActivity extends AppCompatActivity {
         user_id= firebaseAuth.getCurrentUser().getUid();
 
 
-        //Gets current user's profile image and name from firestore
+        //Gets current user's profile image and name from firestore documents using current user's id.
         firebaseFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
+            // If data retrieved sucessfully
                 if(task.isSuccessful()){
                     if(task.getResult().exists()){
                         String name = task.getResult().getString("name");
@@ -100,8 +100,10 @@ public class SetupActivity extends AppCompatActivity {
 
                         setupName.setText(name);
 
+                        //Sets a place holder as profile image when trying to load the picture so it doesnt stay blank.
                         RequestOptions placeholdeRequest = new RequestOptions();
                         placeholdeRequest.placeholder(R.drawable.defaultprofile);
+                        //Loads the retrieved image into profile image field using Glide Library.
                         Glide.with(SetupActivity.this).load(image).into(setupImage);
 
 
@@ -135,7 +137,7 @@ public class SetupActivity extends AppCompatActivity {
 
 
                         final StorageReference image_path = storageReference.child("profile_images").child(user_id +".jpg");
-
+                        //Stores the image in Firebase Storage
                         image_path.putFile(mainImageURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                             @Override
                             public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
@@ -154,7 +156,7 @@ public class SetupActivity extends AppCompatActivity {
 
                                 } else {
                                     setupProgress.setVisibility(View.INVISIBLE);
-                                    Toast.makeText(SetupActivity.this, "Image Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(SetupActivity.this, "Image Uploading Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
 
                             }
@@ -213,8 +215,10 @@ public class SetupActivity extends AppCompatActivity {
 
             downloadUri = task.getResult();
 
-        } else {
-            //If image is not changed
+        }
+        //If image is not changed
+        else {
+
             downloadUri = mainImageURI;
 
         }
